@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SpectraQR</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script type="text/javascript" src="https://unpkg.com/qr-code-styling@1.6.0/lib/qr-code-styling.js"></script>
+    <style>
+      body {
+        font-family: 'Inter', sans-serif;
+      }
+
+      /* THEME VARIABLES */
+      :root {
+        /* Backgrounds */
+        --bg-page: #f8fafc;                       /* gray-50 */
+        --bg-header: rgba(255, 255, 255, 0.6);    /* white/60 */
+        --bg-header-hover: rgba(229, 231, 235, 0.5); /* gray-200/50 */
+        --bg-panel: rgba(255, 255, 255, 0.6);     /* white/60 */
+        --bg-panel-hover: rgba(229, 231, 235, 0.5); /* gray-200/50 */
+        --bg-input: rgba(255, 255, 255, 0.5);     /* white/50 */
+        --bg-toast: #ffffff;                       /* white */
+        --range-track: #e5e7eb;                  /* gray-200 */
+        
+        /* Text */
+        --text-primary: #1e293b;                 /* slate-800 */
+        --text-title: #1e293b;                    /* slate-800 */
+        --text-secondary: #475569;                /* slate-600 */
+        --text-muted: #64748b;                   /* slate-500 */
+        
+        /* Borders */
+        --border-header: rgba(226, 232, 240, 0.5); /* gray-200/50 */
+        --border-panel: rgba(226, 232, 240, 0.5);  /* gray-200/50 */
+        --border-input: #d1d5db;                  /* gray-300 */
+
+        /* Icons */
+        --icon-color: #64748b;                   /* slate-500 */
+        --icon-color-input: #94a3b8;             /* slate-400 */
+        --icon-theme-moon: #4f46e5;              /* indigo-500 */
+        --icon-theme-sun: #facc15;               /* yellow-400 */
+
+        /* Scrollbar */
+        --scrollbar-thumb: rgba(100, 116, 139, 0.5);
+        --scrollbar-thumb-hover: rgba(100, 116, 139, 0.8);
+      }
+
+      html.dark {
+        /* Backgrounds */
+        --bg-page: #0f172a;                       /* slate-900 */
+        --bg-header: rgba(15, 23, 42, 0.6);      /* slate-900/60 */
+        --bg-header-hover: rgba(30, 41, 59, 0.5); /* slate-800/50 */
+        --bg-panel: rgba(30, 41, 59, 0.6);      /* slate-800/60 */
+        --bg-panel-hover: rgba(51, 65, 85, 0.5);  /* slate-700/50 */
+        --bg-input: rgba(51, 65, 85, 0.5);       /* slate-700/50 */
+        --bg-toast: #1e293b;                       /* slate-800 */
+        --range-track: #374151;                  /* gray-700 */
+
+        /* Text */
+        --text-primary: #e2e8f0;                 /* slate-200 */
+        --text-title: #f1f5f9;                    /* slate-100 */
+        --text-secondary: #cbd5e1;                /* slate-300 */
+        --text-muted: #94a3b8;                   /* slate-400 */
+
+        /* Borders */
+        --border-header: rgba(30, 41, 59, 0.5);  /* slate-800/50 */
+        --border-panel: rgba(51, 65, 85, 0.5);   /* slate-700/50 */
+        --border-input: #475569;                  /* slate-600 */
+        
+        /* Icons */
+        --icon-color: #94a3b8;                   /* slate-400 */
+        --icon-color-input: #94a3b8;             /* slate-400 */
+
+        /* Scrollbar */
+        --scrollbar-thumb: rgba(148, 163, 184, 0.5);
+        --scrollbar-thumb-hover: rgba(148, 163, 184, 0.8);
+      }
+
+      /* Polished scrollbar for the new theme */
+      ::-webkit-scrollbar {
+        width: 10px;
+        height: 10px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      ::-webkit-scrollbar-thumb {
+        background-color: var(--scrollbar-thumb);
+        border-radius: 10px;
+        border: 2px solid transparent;
+        background-clip: content-box;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background-color: var(--scrollbar-thumb-hover);
+      }
+    </style>
+    <script>
+      // Set theme on initial load to prevent FOUC (Flash of Unstyled Content)
+      if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark')
+      } else {
+        document.documentElement.classList.remove('dark')
+      }
+    </script>
+  <script type="importmap">
+{
+  "imports": {
+    "react/": "https://aistudiocdn.com/react@^19.1.1/",
+    "react": "https://aistudiocdn.com/react@^19.1.1",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.1.1/",
+    "qr-code-styling": "https://aistudiocdn.com/qr-code-styling@^1.9.2"
+  }
+}
+</script>
+</head>
+  <body class="bg-[var(--bg-page)]">
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>
