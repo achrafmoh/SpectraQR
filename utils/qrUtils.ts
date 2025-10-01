@@ -16,19 +16,24 @@ const generateLongViewerUrl = (data: MultiUrlData): string => {
         links: data.links.map(({ title, url }) => ({ title, url }))
     };
 
-    // 2. Compress the JSON string using pako (zlib), outputting a binary string.
-    const compressedString = pako.deflate(JSON.stringify(payload), { to: 'string' });
-    
-    // 3. Convert the binary string to a base64 string.
-    const base64String = btoa(compressedString);
-    
-    // 4. Make the base64 string URL-safe.
+    // 2. Compress the JSON string to a Uint8Array for robustness.
+    const compressed = pako.deflate(JSON.stringify(payload));
+
+    // 3. Convert the Uint8Array to a binary string which btoa can safely handle.
+    // Using String.fromCharCode.apply is a performant way to do this.
+    const binaryString = String.fromCharCode.apply(null, compressed as any);
+
+    // 4. Convert the binary string to a base64 string.
+    const base64String = btoa(binaryString);
+
+    // 5. Make the base64 string URL-safe.
     const urlSafeBase64 = base64String.replace(/\+/g, '-').replace(/\//g, '_');
 
-    // 5. Construct the final URL.
+    // 6. Construct the final URL.
     const baseUrl = window.location.href.split('#')[0];
     return `${baseUrl}#H-${urlSafeBase64}`;
 };
+
 
 /**
  * Asynchronously shortens a given URL using the TinyURL API.
