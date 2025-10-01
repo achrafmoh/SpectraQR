@@ -3,11 +3,9 @@ import React from 'react';
 // fix: Define DataType enum
 export enum DataType {
     URL = 'url',
-    TEXT = 'text',
     EMAIL = 'email',
     PHONE = 'phone',
     SMS = 'sms',
-    WIFI = 'wifi',
     MULTI_URL = 'multi_url',
 }
 
@@ -74,7 +72,7 @@ export interface QROptions {
 
 // fix: Define types for form data structures
 export interface LinkData {
-    id: string;
+    id: string; // Used for React keys during editing
     url: string;
     title: string;
 }
@@ -85,20 +83,11 @@ export interface MultiUrlData {
     links: LinkData[];
 }
 
-export interface WifiData {
-    ssid: string;
-    encryption: 'WPA' | 'WEP' | 'nopass';
-    password?: string;
-    hidden?: boolean;
-}
-
 export interface FormData {
     [DataType.URL]: string;
-    [DataType.TEXT]: string;
     [DataType.EMAIL]: { email: string; subject: string; body: string };
     [DataType.PHONE]: string;
     [DataType.SMS]: { phone: string; message: string };
-    [DataType.WIFI]: WifiData;
     [DataType.MULTI_URL]: MultiUrlData;
 }
 

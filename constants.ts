@@ -1,6 +1,6 @@
 import { QROptions, DataType, DataTypeOption } from './types';
 import { 
-    IconLink, IconText, IconEmail, IconPhone, IconSms, IconWifi, IconMultiLink 
+    IconLink, IconEmail, IconPhone, IconSms, IconMultiLink 
 } from './components/Icons';
 
 export const DEFAULT_QR_OPTIONS: QROptions = {
@@ -21,7 +21,6 @@ export const DEFAULT_QR_OPTIONS: QROptions = {
         crossOrigin: 'anonymous',
     },
     dotsOptions: {
-        color: '#ffffff',
         type: 'rounded',
         gradient: {
             type: 'linear',
@@ -45,10 +44,8 @@ export const DEFAULT_QR_OPTIONS: QROptions = {
 
 export const DATA_TYPE_OPTIONS: DataTypeOption[] = [
     { id: DataType.URL, label: 'URL', icon: IconLink },
-    { id: DataType.TEXT, label: 'Text', icon: IconText },
     { id: DataType.EMAIL, label: 'Email', icon: IconEmail },
     { id: DataType.PHONE, label: 'Phone', icon: IconPhone },
     { id: DataType.SMS, label: 'SMS', icon: IconSms },
-    { id: DataType.WIFI, label: 'Wi-Fi', icon: IconWifi },
     { id: DataType.MULTI_URL, label: 'Multi Link', icon: IconMultiLink }
 ];

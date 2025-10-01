@@ -2,7 +2,7 @@ import React from 'react';
 import { DataType, FormData, LinkData } from '../types';
 import { generateShortId } from '../utils/helpers';
 // fix: Import IconPhone
-import { IconCopy, IconTrash, IconLink, IconAtSign, IconHash, IconUser, IconPhone } from './Icons';
+import { IconCopy, IconTrash, IconLink, IconAtSign, IconHash, IconPhone, IconGripVertical } from './Icons';
 
 interface DataInputFormProps {
     selectedType: DataType;
@@ -64,6 +64,11 @@ const StyledSelect = ({ label, id, children, ...props }: React.SelectHTMLAttribu
 
 const DataInputForm: React.FC<DataInputFormProps> = ({ selectedType, formData, setFormData, addToast }) => {
 
+    const dragItem = React.useRef<number | null>(null);
+    const dragOverItem = React.useRef<number | null>(null);
+    const [draggingIndex, setDraggingIndex] = React.useState<number | null>(null);
+
+
     const handleChange = (field: string, value: any) => {
         setFormData(prev => ({
             ...prev,
@@ -105,13 +110,36 @@ const DataInputForm: React.FC<DataInputFormProps> = ({ selectedType, formData, s
         handleChange('links', newLinks);
     };
 
+    const handleDragStart = (e: React.DragEvent<HTMLDivElement>, position: number) => {
+        dragItem.current = position;
+        setTimeout(() => {
+            setDraggingIndex(position);
+        }, 0);
+    };
+
+    const handleDragEnter = (e: React.DragEvent<HTMLDivElement>, position: number) => {
+        dragOverItem.current = position;
+    };
+
+    const handleDrop = () => {
+        if (dragItem.current === null || dragOverItem.current === null) return;
+        const links = [...formData[DataType.MULTI_URL].links];
+        const dragItemContent = links.splice(dragItem.current, 1)[0];
+        links.splice(dragOverItem.current, 0, dragItemContent);
+        dragItem.current = null;
+        dragOverItem.current = null;
+        handleChange('links', links);
+    };
+    
+    const handleDragEnd = () => {
+        setDraggingIndex(null);
+    }
+
 
     const renderForm = () => {
         switch (selectedType) {
             case DataType.URL:
                 return <InputField label="Your URL" id="url" type="url" value={formData[DataType.URL]} onChange={handleSimpleChange} placeholder="https://example.com" icon={IconLink} onCopy={() => handleCopyToClipboard(formData[DataType.URL], 'URL')} />;
-            case DataType.TEXT:
-                return <TextAreaField label="Your Text" id="text" value={formData[DataType.TEXT]} onChange={handleSimpleChange} placeholder="Enter any text" />;
             case DataType.EMAIL:
                 return (
                     <div className="space-y-4">
@@ -129,31 +157,27 @@ const DataInputForm: React.FC<DataInputFormProps> = ({ selectedType, formData, s
                         <TextAreaField label="Message" id="sms-message" value={formData[DataType.SMS].message} onChange={(e) => handleChange('message', e.target.value)} />
                     </div>
                 );
-            case DataType.WIFI:
-                return (
-                     <div className="space-y-4">
-                        <InputField label="Network SSID" id="wifi-ssid" type="text" value={formData[DataType.WIFI].ssid} onChange={(e) => handleChange('ssid', e.target.value)} icon={IconUser} />
-                        <InputField label="Password" id="wifi-password" type="password" value={formData[DataType.WIFI].password} onChange={(e) => handleChange('password', e.target.value)} disabled={formData[DataType.WIFI].encryption === 'nopass'} />
-                         <StyledSelect id="wifi-encryption" label="Encryption" value={formData[DataType.WIFI].encryption} onChange={(e) => handleChange('encryption', e.target.value as 'WPA' | 'WEP' | 'nopass')}>
-                            <option value="WPA">WPA/WPA2</option>
-                            <option value="WEP">WEP</option>
-                            <option value="nopass">None</option>
-                        </StyledSelect>
-                        <div className="flex items-center">
-                            <input type="checkbox" id="wifi-hidden" checked={!!formData[DataType.WIFI].hidden} onChange={(e) => handleChange('hidden', e.target.checked)} className="h-4 w-4 rounded border-gray-300 text-sky-600 focus:ring-sky-500" />
-                            <label htmlFor="wifi-hidden" className="ml-2 block text-sm text-[var(--text-secondary)]">Hidden Network</label>
-                        </div>
-                    </div>
-                );
             case DataType.MULTI_URL:
                  return (
                     <div className="space-y-4">
-                        <h3 className="text-lg font-semibold text-[var(--text-secondary)]">Landing Page</h3>
+                        <h3 className="text-lg font-semibold text-[var(--text-secondary)] pt-2">Landing Page</h3>
                         <InputField label="Title" id="multi-title" type="text" value={formData[DataType.MULTI_URL].title} onChange={(e) => handleChange('title', e.target.value)} />
                         <TextAreaField label="Description" id="multi-desc" value={formData[DataType.MULTI_URL].description} onChange={(e) => handleChange('description', e.target.value)} />
                          <h3 className="text-lg font-semibold text-[var(--text-secondary)] pt-4">Links</h3>
                         {formData[DataType.MULTI_URL].links.map((link, index) => (
-                            <div key={link.id} className="relative p-4 border border-[var(--border-input)] rounded-lg bg-black/[.05] dark:bg-white/[.05]">
+                            <div 
+                                key={link.id}
+                                draggable
+                                onDragStart={(e) => handleDragStart(e, index)}
+                                onDragEnter={(e) => handleDragEnter(e, index)}
+                                onDragEnd={handleDragEnd}
+                                onDragOver={(e) => e.preventDefault()}
+                                onDrop={handleDrop}
+                                className={`relative p-4 pl-12 border border-[var(--border-input)] rounded-lg bg-black/[.05] dark:bg-white/[.05] animate-fade-in-scale-up transition-all duration-300 ${draggingIndex === index ? 'opacity-50 shadow-2xl scale-105' : 'shadow-sm'}`}
+                            >
+                                <div className="absolute top-0 left-0 h-full flex items-center px-4 text-slate-400 drag-handle" title="Drag to reorder">
+                                    <IconGripVertical className="w-5 h-5"/>
+                                </div>
                                 <button onClick={() => removeLink(index)} className="absolute top-3 right-3 p-1 text-slate-400 hover:text-red-500 rounded-full hover:bg-red-500/10 transition" aria-label="Remove link">
                                      <IconTrash className="w-5 h-5" />
                                 </button>

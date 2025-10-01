@@ -10,6 +10,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script type="text/javascript" src="https://unpkg.com/qr-code-styling@1.6.0/lib/qr-code-styling.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js"></script>
     <style>
       body {
         font-family: 'Inter', sans-serif;
@@ -96,6 +97,30 @@
       }
       ::-webkit-scrollbar-thumb:hover {
         background-color: var(--scrollbar-thumb-hover);
+      }
+      
+      /* Animation for new list items */
+      @keyframes fadeInScaleUp {
+        from {
+          opacity: 0;
+          transform: scale(0.95);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+
+      .animate-fade-in-scale-up {
+        animation: fadeInScaleUp 0.3s ease-out forwards;
+      }
+      
+      /* Cursor for drag handle */
+      .drag-handle {
+        cursor: grab;
+      }
+      .drag-handle:active {
+        cursor: grabbing;
       }
     </style>
     <script>

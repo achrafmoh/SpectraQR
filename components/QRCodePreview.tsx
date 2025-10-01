@@ -1,74 +1,56 @@
-
-
 import React, { useEffect, useRef } from 'react';
 import QRCodeStyling from 'qr-code-styling';
-import { DataType, FormData, QROptions } from '../types';
+import { QROptions } from '../types';
 
 interface QRCodePreviewProps {
-    data: FormData;
-    selectedType: DataType;
+    qrData: string;
+    isDataTooLong: boolean;
     options: QROptions;
     addToast: (message: string, type: 'success' | 'error' | 'info') => void;
+    isLoading: boolean;
 }
 
-const getQrData = (type: DataType, formData: FormData): string => {
-    switch (type) {
-        case DataType.URL:
-            return formData[DataType.URL];
-        case DataType.TEXT:
-            return formData[DataType.TEXT];
-        case DataType.EMAIL: {
-            const { email, subject, body } = formData[DataType.EMAIL];
-            return `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-        }
-        case DataType.PHONE:
-            return `tel:${formData[DataType.PHONE]}`;
-        case DataType.SMS: {
-            const { phone, message } = formData[DataType.SMS];
-            return `sms:${phone}?body=${encodeURIComponent(message)}`;
-        }
-        case DataType.WIFI: {
-            const { ssid, password, encryption, hidden } = formData[DataType.WIFI];
-            return `WIFI:T:${encryption};S:${ssid};P:${password || ''};H:${!!hidden};`;
-        }
-        case DataType.MULTI_URL:
-            return 'https://example.com/multi-link-page';
-        default:
-            return '';
-    }
-}
-
-
-const QRCodePreview: React.FC<QRCodePreviewProps> = ({ data, selectedType, options, addToast }) => {
+const QRCodePreview: React.FC<QRCodePreviewProps> = ({ qrData, isDataTooLong, isLoading, options, addToast }) => {
     const ref = useRef<HTMLDivElement>(null);
     const qrCode = useRef<QRCodeStyling>();
 
-    const qrData = getQrData(selectedType, data);
-
-    // This avoids potential issues like stale closures from using two separate effects.
     useEffect(() => {
+        if (isDataTooLong && !isLoading) {
+            addToast('Content is too long or could not be processed. Please shorten it.', 'error');
+        }
+    }, [isDataTooLong, isLoading, addToast]);
+
+    useEffect(() => {
+        if (isLoading || isDataTooLong) {
+            if (ref.current) {
+                ref.current.innerHTML = '';
+            }
+            qrCode.current = undefined;
+            return;
+        }
+
         if (!ref.current) {
             return;
         }
 
-        if (!qrCode.current) {
-            qrCode.current = new QRCodeStyling({
-                ...options,
-                data: qrData,
-            });
-            qrCode.current.append(ref.current);
-        } else {
-            qrCode.current.update({
-                ...options,
-                data: qrData,
-            });
-        }
-    }, [options, qrData]);
+        const qrInstance = new QRCodeStyling({
+            ...options,
+            data: qrData || ' ', 
+        });
+
+        ref.current.innerHTML = '';
+        qrInstance.append(ref.current);
+        qrCode.current = qrInstance;
+
+    }, [qrData, isDataTooLong, isLoading, options]);
 
 
     const handleDownload = (extension: 'svg' | 'png' | 'jpeg') => {
+        if (isDataTooLong || isLoading) {
+            addToast('Cannot download: QR code is not ready.', 'error');
+            return;
+        }
         if (qrCode.current) {
-            // fix: The 'download' method in qr-code-styling was called without the required options object. This provides the extension to specify the download format.
             qrCode.current.download({ extension });
             addToast(`QR Code downloaded as ${extension.toUpperCase()}`, 'success');
         } else {
@@ -80,10 +62,39 @@ const QRCodePreview: React.FC<QRCodePreviewProps> = ({ data, selectedType, optio
     return (
         <div className="bg-[var(--bg-panel)] backdrop-blur-lg border border-[var(--border-panel)] rounded-2xl p-6 shadow-2xl flex flex-col items-center gap-6">
             <h3 className="text-xl font-bold text-[var(--text-title)]">Preview</h3>
-            <div ref={ref} className="overflow-hidden rounded-lg" />
+            <div className="w-[300px] h-[300px] flex items-center justify-center rounded-lg bg-[var(--bg-input)]">
+                {isLoading ? (
+                     <div className="flex flex-col items-center gap-4 text-center text-[var(--text-secondary)]">
+                        <svg className="animate-spin h-10 w-10 text-sky-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        <p className="text-sm font-medium">Generating short link...</p>
+                    </div>
+                ) : isDataTooLong ? (
+                    <div className="text-center text-red-500 p-4 bg-red-500/10 rounded-lg w-full mx-4" aria-live="polite">
+                        <p className="font-semibold">Error Generating QR</p>
+                        <p className="text-sm">Could not generate QR code. Please try again or shorten content.</p>
+                    </div>
+                ) : (
+                    <div ref={ref} className="overflow-hidden rounded-lg" />
+                )}
+            </div>
             <div className="flex gap-4">
-                <button onClick={() => handleDownload('png')} className="px-4 py-2 bg-sky-500 text-white font-semibold rounded-lg hover:bg-sky-600 transition shadow-md">Download PNG</button>
-                <button onClick={() => handleDownload('svg')} className="px-4 py-2 bg-slate-600 text-white font-semibold rounded-lg hover:bg-slate-700 transition shadow-md">Download SVG</button>
+                <button 
+                    onClick={() => handleDownload('png')} 
+                    disabled={isDataTooLong || isLoading} 
+                    className="px-4 py-2 bg-sky-500 text-white font-semibold rounded-lg hover:bg-sky-600 transition shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                    Download PNG
+                </button>
+                <button 
+                    onClick={() => handleDownload('svg')} 
+                    disabled={isDataTooLong || isLoading} 
+                    className="px-4 py-2 bg-slate-600 text-white font-semibold rounded-lg hover:bg-slate-700 transition shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                    Download SVG
+                </button>
             </div>
         </div>
     );

@@ -19,14 +19,6 @@ export const IconLink: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
     </svg>
 );
 
-export const IconText: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
-    <svg {...IconProps} {...props}>
-        <path d="M17 6.1H3" />
-        <path d="M21 12.1H3" />
-        <path d="M15.1 18.1H3" />
-    </svg>
-);
-
 export const IconEmail: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
     <svg {...IconProps} {...props}>
         <rect width="20" height="16" x="2" y="4" rx="2" />
@@ -43,15 +35,6 @@ export const IconPhone: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
 export const IconSms: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
     <svg {...IconProps} {...props}>
         <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-    </svg>
-);
-
-export const IconWifi: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
-    <svg {...IconProps} {...props}>
-        <path d="M5 12.55a11 11 0 0 1 14.08 0" />
-        <path d="M1.42 9a16 16 0 0 1 21.16 0" />
-        <path d="M8.53 16.11a6 6 0 0 1 6.95 0" />
-        <line x1="12" x2="12.01" y1="20" y2="20" />
     </svg>
 );
 
@@ -141,13 +124,6 @@ export const IconHash: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
     </svg>
 );
 
-export const IconUser: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
-    <svg {...IconProps} {...props}>
-        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-        <circle cx="12" cy="7" r="4"></circle>
-    </svg>
-);
-
 export const IconPalette: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
     <svg {...IconProps} {...props}><path d="M13.5 2c-5.62.44-9.04 5.33-8.5 10.74.48 4.84 4.33 8.76 9.24 8.76 4.33 0 7.92-3.03 8.5-7.26.58-4.23-2.06-8.23-6.5-8.74m-1.5 7.02c-.34.34-.34.89 0 1.22.33.34.88.34 1.22 0 .34-.33.34-.88 0-1.22-.34-.33-.89-.33-1.22 0m-3.41-2.09c-.34.33-.34.88 0 1.22.34.33.89.33 1.22 0 .34-.34.34-.89 0-1.22-.33-.34-.88-.34-1.22 0m2.09-3.41c-.34.34-.34.89 0 1.22.33.34.88.34 1.22 0 .34-.33.34-.88 0-1.22-.34-.33-.89-.33-1.22 0m3.18 8.62c.34-.34.89-.34 1.22 0 .34.34.34.89 0 1.22-.33.34-.88.34-1.22 0-.34-.33-.34-.88 0-1.22z"/></svg>
 );
@@ -162,4 +138,22 @@ export const IconImage: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
 
 export const IconSettings: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
     <svg {...IconProps} {...props}><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 0 2l-.15.08a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.38a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1 0-2l.15-.08a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+);
+
+export const IconGripVertical: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+    <svg {...IconProps} {...props}>
+        <circle cx="9" cy="12" r="1"></circle>
+        <circle cx="9" cy="5" r="1"></circle>
+        <circle cx="9" cy="19" r="1"></circle>
+        <circle cx="15" cy="12" r="1"></circle>
+        <circle cx="15" cy="5" r="1"></circle>
+        <circle cx="15" cy="19" r="1"></circle>
+    </svg>
+);
+
+export const IconRotateCcw: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+    <svg {...IconProps} {...props}>
+        <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+        <path d="M3 3v5h5" />
+    </svg>
 );
