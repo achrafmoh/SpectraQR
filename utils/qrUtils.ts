@@ -16,11 +16,11 @@ const generateLongViewerUrl = (data: MultiUrlData): string => {
         links: data.links.map(({ title, url }) => ({ title, url }))
     };
 
-    // 2. Compress the JSON string using pako (zlib).
-    const compressed = pako.deflate(JSON.stringify(payload));
+    // 2. Compress the JSON string using pako (zlib), outputting a binary string.
+    const compressedString = pako.deflate(JSON.stringify(payload), { to: 'string' });
     
-    // 3. Convert Uint8Array to a base64 string.
-    const base64String = btoa(String.fromCharCode.apply(null, compressed as any));
+    // 3. Convert the binary string to a base64 string.
+    const base64String = btoa(compressedString);
     
     // 4. Make the base64 string URL-safe.
     const urlSafeBase64 = base64String.replace(/\+/g, '-').replace(/\//g, '_');
