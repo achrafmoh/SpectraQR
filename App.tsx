@@ -14,8 +14,23 @@ declare const pako: any;
 // Decodes a base64, pako-compressed string from the URL hash
 const decodePayload = (encoded: string): MultiUrlData | null => {
     try {
-        const decoded_b64 = atob(encoded.replace(/-/g, '+').replace(/_/g, '/'));
-        const inflated = pako.inflate(decoded_b64, { to: 'string' });
+        // Step 1: Sanitize the URL-safe base64 string back to a standard base64 string
+        const base64 = encoded.replace(/-/g, '+').replace(/_/g, '/');
+        
+        // Step 2: Decode base64 to a binary string using atob
+        const binaryString = atob(base64);
+        
+        // Step 3: Convert the binary string to a Uint8Array. This is a crucial, robust step.
+        const len = binaryString.length;
+        const bytes = new Uint8Array(len);
+        for (let i = 0; i < len; i++) {
+            bytes[i] = binaryString.charCodeAt(i);
+        }
+        
+        // Step 4: Decompress the Uint8Array to get the original JSON string
+        const inflated = pako.inflate(bytes, { to: 'string' });
+        
+        // Step 5: Parse the JSON string
         const data = JSON.parse(inflated);
 
         // Basic validation

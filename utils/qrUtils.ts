@@ -9,27 +9,30 @@ declare const pako: any;
  * @returns A long URL with the data in the hash (e.g., "https://yourapp.com/#H-compressedstring").
  */
 const generateLongViewerUrl = (data: MultiUrlData): string => {
-    // 1. Create a cleaner payload, stripping internal 'id' fields.
+    // Step 1: Create a cleaner payload, stripping internal 'id' fields.
     const payload = {
         title: data.title,
         description: data.description,
         links: data.links.map(({ title, url }) => ({ title, url }))
     };
 
-    // 2. Compress the JSON string to a Uint8Array for robustness.
+    // Step 2: Compress the JSON string to a Uint8Array for robustness.
     const compressed = pako.deflate(JSON.stringify(payload));
 
-    // 3. Convert the Uint8Array to a binary string which btoa can safely handle.
-    // Using String.fromCharCode.apply is a performant way to do this.
-    const binaryString = String.fromCharCode.apply(null, compressed as any);
+    // Step 3: Manually and safely convert Uint8Array to a binary string.
+    // This is required for btoa() to work correctly and avoids engine inconsistencies.
+    let binaryString = '';
+    for (let i = 0; i < compressed.length; i++) {
+        binaryString += String.fromCharCode(compressed[i]);
+    }
 
-    // 4. Convert the binary string to a base64 string.
+    // Step 4: Convert the binary string to a base64 string.
     const base64String = btoa(binaryString);
 
-    // 5. Make the base64 string URL-safe.
+    // Step 5: Make the base64 string URL-safe by replacing '+' and '/' characters.
     const urlSafeBase64 = base64String.replace(/\+/g, '-').replace(/\//g, '_');
 
-    // 6. Construct the final URL.
+    // Step 6: Construct the final URL with the data in the hash.
     const baseUrl = window.location.href.split('#')[0];
     return `${baseUrl}#H-${urlSafeBase64}`;
 };
